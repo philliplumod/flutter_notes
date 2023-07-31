@@ -41,18 +41,18 @@ class NotesDatabase {
     ${NoteFields.number} $integerType,
     ${NoteFields.title} $textType,
     ${NoteFields.description} $textType,
-    ${NoteFields.time} $textType,
+    ${NoteFields.time} $textType
     )
     ''');
   }
 
-  Future<Note> create(Note note) async {
+  Future<Notes> create(Notes note) async {
     final db = await instance.database;
     final id = await db.insert(tableNotes, note.toJson());
     return note.copy(id: id);
   }
 
-  Future<Note> readNote(int id) async {
+  Future<Notes> readNote(int id) async {
     final db = await instance.database;
 
     final maps = await db.query(
@@ -62,21 +62,21 @@ class NotesDatabase {
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return Note.fromJson(maps.first);
+      return Notes.fromJson(maps.first);
     } else {
       throw Exception('ID $id not found');
     }
   }
 
-  Future<List<Note>> readAllNotes() async {
+  Future<List<Notes>> readAllNotes() async {
     final db = await instance.database;
     const orderBy = '${NoteFields.time} ASC';
     final result = await db.query(tableNotes, orderBy: orderBy);
 
-    return result.map((json) => Note.fromJson(json)).toList();
+    return result.map((json) => Notes.fromJson(json)).toList();
   }
 
-  Future<int> update(Note note) async {
+  Future<int> update(Notes note) async {
     final db = await instance.database;
 
     return db.update(
