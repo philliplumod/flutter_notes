@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:intl/intl.dart';
 
 import '../../data/db/notes_database.dart';
 import '../../data/model/note_model.dart';
 import '../bloc/notes_bloc.dart';
 import '../widgets/note_card.dart';
-import 'note_detail_screen.dart';
 import 'note_edit_screen.dart';
 
 class NoteScreen extends StatefulWidget {
@@ -17,7 +17,9 @@ class NoteScreen extends StatefulWidget {
 }
 
 class _NoteScreenState extends State<NoteScreen> {
+  bool isEditing = false;
   late NotesBloc _notesBloc;
+  Notes? note;
 
   @override
   void initState() {
@@ -73,13 +75,24 @@ class _NoteScreenState extends State<NoteScreen> {
   AppBar _appBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
+      elevation: 0,
       centerTitle: true,
-      title: const Text(
-        'Notes',
-        style: TextStyle(color: Colors.blueAccent),
+      title: RichText(
+        text: const TextSpan(
+            children: [
+              TextSpan(text: 'Flutter'),
+              TextSpan(
+                text: 'Notes',
+                style: TextStyle(color: Colors.blue),
+              )
+            ],
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold)),
       ),
       actions: const [
-        Icon(Icons.search),
+        Icon(Icons.search, color: Colors.black),
         SizedBox(
           width: 12,
         )
@@ -99,16 +112,94 @@ class _NoteScreenState extends State<NoteScreen> {
         if (index < notes.length) {
           final Notes note = notes[index];
           return GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => NoteDetailScreen(noteId: note.id!),
-              ));
-              _notesBloc.add(RefreshNotesEvent());
+            onTap: () {
+              _showNoteDetailBottomSheet(note);
             },
             child: NoteCardWidget(note: note, index: index),
           );
         } else {
           return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  void _showNoteDetailBottomSheet(Notes note) {
+    setState(() {
+      this.note = note;
+    });
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return _buildNoteDetailBottomSheet(note);
+      },
+    );
+  }
+
+  Widget _buildNoteDetailBottomSheet(Notes note) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10.0,
+            spreadRadius: 0.0,
+          )
+        ],
+      ),
+      alignment: Alignment.topLeft,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                note.title,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              Row(
+                children: [editButton(), deleteButton()],
+              )
+            ],
+          ),
+          Text(note.description),
+          Text(
+            DateFormat.yMMMd().format(note.createdTime),
+            style: const TextStyle(color: Colors.black, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget editButton() {
+    return IconButton(
+      icon: const Icon(Icons.edit_outlined),
+      onPressed: () {
+        setState(() {
+          isEditing = true;
+        });
+      },
+    );
+  }
+
+  Widget deleteButton() {
+    return IconButton(
+      icon: const Icon(Icons.delete),
+      onPressed: () async {
+        if (note != null) {
+          await NotesDatabase.instance.delete(note!.id!);
+          _notesBloc.add(RefreshNotesEvent());
         }
       },
     );

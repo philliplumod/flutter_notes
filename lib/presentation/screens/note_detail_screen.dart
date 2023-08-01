@@ -38,6 +38,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: _appBar(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -49,14 +50,15 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   Text(
                     note.title,
                     style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 22,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
+                  Text(note.description),
                   Text(
                     DateFormat.yMMMd().format(note.createdTime),
-                    style: const TextStyle(color: Colors.white70, fontSize: 18),
+                    style: const TextStyle(color: Colors.black, fontSize: 12),
                   )
                 ],
               ),
@@ -65,6 +67,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   }
 
   AppBar _appBar() => AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        elevation: 0,
         actions: [editButton(), deleteButton()],
       );
 
