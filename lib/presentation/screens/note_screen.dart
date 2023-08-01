@@ -1,69 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_notes/data/db/notes_database.dart';
-import 'package:flutter_notes/presentation/screens/note_detail_screen.dart';
-import 'package:flutter_notes/presentation/screens/note_edit_screen.dart';
-import 'package:flutter_notes/presentation/widgets/note_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+import '../../data/db/notes_database.dart';
 import '../../data/model/note_model.dart';
+import '../bloc/notes_bloc.dart';
+import '../widgets/note_card.dart';
+import 'note_detail_screen.dart';
+import 'note_edit_screen.dart';
 
 class NoteScreen extends StatefulWidget {
-  const NoteScreen({super.key});
+  const NoteScreen({Key? key}) : super(key: key);
 
   @override
   State<NoteScreen> createState() => _NoteScreenState();
 }
 
 class _NoteScreenState extends State<NoteScreen> {
-  late List<Notes> notes;
-  bool isLoading = false;
+  late NotesBloc _notesBloc;
 
   @override
   void initState() {
     super.initState();
-    refreshNotes();
+    _notesBloc = NotesBloc(NotesDatabase.instance);
+    _notesBloc.add(RefreshNotesEvent());
   }
 
   @override
   void dispose() {
-    NotesDatabase.instance.close();
+    _notesBloc.close();
     super.dispose();
-  }
-
-  Future refreshNotes() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    notes = await NotesDatabase.instance.readAllNotes();
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(),
-      body: Center(
-        child: isLoading
-            ? const CircularProgressIndicator()
-            : notes.isEmpty
-                ? const Text(
-                    'No Notes',
-                    style: TextStyle(color: Colors.black, fontSize: 24),
-                  )
-                : buildNotes(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const AddEditNotePage()));
-          refreshNotes();
-        },
-        backgroundColor: Colors.black,
-        child: const Icon(Icons.add),
+    return BlocProvider(
+      create: (context) => _notesBloc,
+      child: Scaffold(
+        appBar: _appBar(),
+        body: BlocBuilder<NotesBloc, NotesState>(
+          builder: (context, state) {
+            if (state is NotesLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is NotesLoadedState) {
+              final notes = state.notes;
+              return Center(
+                child: notes.isEmpty
+                    ? const Text(
+                        'No Notes',
+                        style: TextStyle(color: Colors.black, fontSize: 24),
+                      )
+                    : buildNotes(notes),
+              );
+            }
+            return Container();
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const AddEditNotePage()),
+            );
+            _notesBloc.add(RefreshNotesEvent());
+          },
+          backgroundColor: Colors.black,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -85,16 +87,7 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
-  Widget buildNotes() {
-    if (notes.isEmpty) {
-      return const Center(
-        child: Text(
-          'No Notes',
-          style: TextStyle(color: Colors.black, fontSize: 24),
-        ),
-      );
-    }
-
+  Widget buildNotes(List<Notes> notes) {
     return StaggeredGridView.countBuilder(
       crossAxisCount: 4,
       mainAxisSpacing: 4,
@@ -110,35 +103,14 @@ class _NoteScreenState extends State<NoteScreen> {
               await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => NoteDetailScreen(noteId: note.id!),
               ));
-              refreshNotes();
+              _notesBloc.add(RefreshNotesEvent());
             },
             child: NoteCardWidget(note: note, index: index),
           );
         } else {
-          return const SizedBox
-              .shrink(); // Return an empty widget for invalid indices
+          return const SizedBox.shrink();
         }
       },
     );
   }
-
-  // Widget buildNotes() => StaggeredGridView.countBuilder(
-  //       crossAxisCount: 4,
-  //       mainAxisSpacing: 4,
-  //       crossAxisSpacing: 4,
-  //       padding: const EdgeInsets.all(8),
-  //       staggeredTileBuilder: (index) => const StaggeredTile.fit(2),
-  //       itemBuilder: (context, index) {
-  //         final Notes note = notes[index];
-  //         return GestureDetector(
-  //           onTap: () async {
-  //             await Navigator.of(context).push(MaterialPageRoute(
-  //               builder: (context) => NoteDetailScreen(noteId: note.id!),
-  //             ));
-  //             refreshNotes();
-  //           },
-  //           child: NoteCardWidget(note: note, index: index),
-  //         );
-  //       },
-  //     );
 }
