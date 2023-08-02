@@ -6,7 +6,6 @@ class NoteFormWidget extends StatelessWidget {
   final String? title;
   final String? description;
 
-  final ValueChanged<bool> onChangedImportant;
   final ValueChanged<int> onChangedNumber;
   final ValueChanged<String> onChangedTitle;
   final ValueChanged<String> onChangedDescription;
@@ -17,39 +16,24 @@ class NoteFormWidget extends StatelessWidget {
       this.number,
       this.title,
       this.description,
-      required this.onChangedImportant,
       required this.onChangedNumber,
       required this.onChangedTitle,
       required this.onChangedDescription});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      height: double.infinity,
       padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Switch(
-                  value: isImportant ?? false, onChanged: onChangedImportant),
-              Expanded(
-                child: Slider(
-                  min: 0,
-                  max: 5,
-                  value: (number ?? 0).toDouble(),
-                  onChanged: (number) => onChangedNumber(
-                    number.toInt(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          buildTitle(),
-          const SizedBox(height: 8),
-          buildDescription(),
-          const SizedBox(height: 16),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildTitle(),
+            const SizedBox(height: 8),
+            buildDescription(),
+          ],
+        ),
       ),
     );
   }
@@ -58,14 +42,14 @@ class NoteFormWidget extends StatelessWidget {
         maxLines: 1,
         initialValue: title,
         style: const TextStyle(
-          color: Colors.white70,
+          color: Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 24,
         ),
         decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: 'Title',
-          hintStyle: TextStyle(color: Colors.white70),
+          hintStyle: TextStyle(color: Colors.black),
         ),
         validator: (title) =>
             title != null && title.isEmpty ? 'The title cannot be empty' : null,
@@ -73,13 +57,13 @@ class NoteFormWidget extends StatelessWidget {
       );
 
   Widget buildDescription() => TextFormField(
-        maxLines: 5,
+        maxLines: 10,
         initialValue: description,
-        style: const TextStyle(color: Colors.white60, fontSize: 18),
+        style: const TextStyle(color: Colors.black, fontSize: 18),
         decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: 'Type something...',
-          hintStyle: TextStyle(color: Colors.white60),
+          hintStyle: TextStyle(color: Colors.black),
         ),
         validator: (title) => title != null && title.isEmpty
             ? 'The description cannot be empty'

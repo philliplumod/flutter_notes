@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/model/note_model.dart';
+import 'dart:math';
 
 final _lightColors = [
   Colors.amber.shade300,
@@ -52,17 +53,7 @@ class NoteCardWidget extends StatelessWidget {
   }
 
   double getMinHeight(int index) {
-    switch (index % 4) {
-      case 0:
-        return 100;
-      case 1:
-        return 150;
-      case 2:
-        return 150;
-      case 3:
-        return 100;
-      default:
-        return 100;
-    }
+    final random = Random(index);
+    return 100 + random.nextDouble() * 50; // Random height between 100 and 150
   }
 }

@@ -30,38 +30,33 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [buildButton()],
       ),
-      body: Container(
-        color: Colors.amber,
-        child: Form(
-            key: _formKey,
-            child: NoteFormWidget(
-                isImportant: isImportant,
-                number: number,
-                title: title,
-                description: description,
-                onChangedImportant: (isImportant) {
-                  setState(() {
-                    this.isImportant = isImportant;
-                  });
-                },
-                onChangedNumber: (number) {
-                  setState(() {
-                    this.number = number;
-                  });
-                },
-                onChangedTitle: (title) {
-                  setState(() {
-                    this.title = title;
-                  });
-                },
-                onChangedDescription: (description) {
-                  setState(() {
-                    this.description = description;
-                  });
-                })),
+      body: Form(
+        key: _formKey,
+        child: NoteFormWidget(
+          isImportant: isImportant,
+          number: number,
+          title: title,
+          description: description,
+          onChangedNumber: (number) {
+            setState(() {
+              this.number = number;
+            });
+          },
+          onChangedTitle: (title) {
+            setState(() {
+              this.title = title;
+            });
+          },
+          onChangedDescription: (description) {
+            setState(() {
+              this.description = description;
+            });
+          },
+        ),
       ),
     );
   }
@@ -76,7 +71,7 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
       child: ElevatedButton(
         onPressed: addOrUpdateNote,
         style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
+            foregroundColor: Colors.black,
             backgroundColor: isFormValid ? null : Colors.grey),
         child: const Text('Save'),
       ),

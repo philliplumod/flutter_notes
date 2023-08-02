@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_notes/presentation/widgets/note_icon_button.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:intl/intl.dart';
 
@@ -128,8 +129,9 @@ class _NoteScreenState extends State<NoteScreen> {
     setState(() {
       this.note = note;
     });
+    final currentContext = context;
     showModalBottomSheet(
-      context: context,
+      context: currentContext,
       builder: (BuildContext context) {
         return _buildNoteDetailBottomSheet(note);
       },
@@ -168,7 +170,30 @@ class _NoteScreenState extends State<NoteScreen> {
               ),
               const Spacer(),
               Row(
-                children: [editButton(), deleteButton()],
+                children: [
+                  // edit
+                  CustomIconButton(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const AddEditNotePage()),
+                      );
+                      // setState(() {
+                      //   isEditing = true;
+                      // });
+                    },
+                    icon: const Icon(Icons.edit_outlined),
+                  ),
+
+                  // delete
+                  CustomIconButton(
+                    onPressed: () async {
+                      await NotesDatabase.instance.delete(note.id!);
+                      _notesBloc.add(RefreshNotesEvent());
+                    },
+                    icon: const Icon(Icons.delete_outline),
+                  )
+                ],
               )
             ],
           ),
@@ -179,29 +204,6 @@ class _NoteScreenState extends State<NoteScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget editButton() {
-    return IconButton(
-      icon: const Icon(Icons.edit_outlined),
-      onPressed: () {
-        setState(() {
-          isEditing = true;
-        });
-      },
-    );
-  }
-
-  Widget deleteButton() {
-    return IconButton(
-      icon: const Icon(Icons.delete),
-      onPressed: () async {
-        if (note != null) {
-          await NotesDatabase.instance.delete(note!.id!);
-          _notesBloc.add(RefreshNotesEvent());
-        }
-      },
     );
   }
 }
