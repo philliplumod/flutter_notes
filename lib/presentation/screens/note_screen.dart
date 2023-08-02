@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_notes/presentation/screens/note_detail_screen.dart';
 import 'package:flutter_notes/presentation/widgets/note_icon_button.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:intl/intl.dart';
@@ -133,12 +134,12 @@ class _NoteScreenState extends State<NoteScreen> {
     showModalBottomSheet(
       context: currentContext,
       builder: (BuildContext context) {
-        return _buildNoteDetailBottomSheet(note);
+        return _buildNoteDetailBottomSheet(note, context);
       },
     );
   }
 
-  Widget _buildNoteDetailBottomSheet(Notes note) {
+  Widget _buildNoteDetailBottomSheet(Notes note, BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
@@ -172,15 +173,16 @@ class _NoteScreenState extends State<NoteScreen> {
               Row(
                 children: [
                   // edit
-                  CustomIconButton(
+                  IconButton(
                     onPressed: () async {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => const AddEditNotePage()),
+                          builder: (context) => NoteDetailScreen(
+                            noteId: note.id!,
+                          ),
+                        ),
                       );
-                      // setState(() {
-                      //   isEditing = true;
-                      // });
+                      _notesBloc.add(RefreshNotesEvent());
                     },
                     icon: const Icon(Icons.edit_outlined),
                   ),
@@ -192,6 +194,7 @@ class _NoteScreenState extends State<NoteScreen> {
                       _notesBloc.add(RefreshNotesEvent());
                     },
                     icon: const Icon(Icons.delete_outline),
+                    parentContext: context,
                   )
                 ],
               )
