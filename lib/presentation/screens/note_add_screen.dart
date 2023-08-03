@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_notes/presentation/widgets/note_form.dart';
+import 'package:flutter_notes/presentation/widgets/note_icon_button.dart';
 
+import '../../data/db/notes_database.dart';
 import '../../data/model/note_model.dart';
 
 class AddNotePage extends StatefulWidget {
@@ -29,7 +32,57 @@ class _AddNotePageState extends State<AddNotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [buildButton()],
+      ),
+      body: Form(
+          key: _formKey,
+          child: NoteFormWidget(
+              title: title,
+              description: description,
+              onChangedTitle: (title) {
+                setState(() {
+                  this.title = title;
+                });
+              },
+              onChangedDescription: (description) {
+                setState(() {
+                  this.description = description;
+                });
+              })),
     );
+  }
+
+  buildButton() {
+    final isFormValid = title.isNotEmpty && description.isNotEmpty;
+    return CustomIconButton(
+        onPressed: () {
+          addOrUpdateNote;
+        },
+        icon: Icon(
+          Icons.save_outlined,
+          color: isFormValid ? Colors.white : Colors.white38,
+        ),
+        parentContext: context);
+  }
+
+  void addOrUpdateNote() async {
+    final isValid = _formKey.currentState!.validate();
+
+    if (isValid) {
+      final isSave = widget.note != null;
+      if (isSave) {
+        await addNote();
+      }
+    }
+  }
+
+  Future addNote() async {
+    final note = Notes(
+      title: title,
+      description: description,
+      createdTime: DateTime.now(),
+    );
+    await NotesDatabase.instance.create(note);
   }
 }
