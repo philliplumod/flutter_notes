@@ -30,21 +30,37 @@ class NotesDatabase {
 
   Future _createDb(Database db, int version) async {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const boolType = 'BOOLEAN NOT NULL';
-    const integerType = 'INTEGER NOT NULL';
     const textType = 'TEXT NOT NULL';
 
     await db.execute('''
     CREATE TABLE $tableNotes (
     ${NoteFields.id} $idType,
-    ${NoteFields.isImportant} $boolType,
-    ${NoteFields.number} $integerType,
     ${NoteFields.title} $textType,
     ${NoteFields.description} $textType,
     ${NoteFields.time} $textType
     )
     ''');
+    
   }
+
+  //   Future _createDb(Database db, int version) async {
+  //   const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+  //   const boolType = 'BOOLEAN NOT NULL';
+  //   const integerType = 'INTEGER NOT NULL';
+  //   const textType = 'TEXT NOT NULL';
+
+  //   await db.execute('''
+  //   CREATE TABLE $tableNotes (
+  //   ${NoteFields.id} $idType,
+  //   ${NoteFields.isImportant} $boolType,
+  //   ${NoteFields.number} $integerType,
+  //   ${NoteFields.title} $textType,
+  //   ${NoteFields.description} $textType,
+  //   ${NoteFields.time} $textType
+  //   )
+  //   ''');
+    
+  // }
 
   Future<Notes> create(Notes note) async {
     final db = await instance.database;

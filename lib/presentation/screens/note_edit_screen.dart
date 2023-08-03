@@ -13,16 +13,16 @@ class AddEditNotePage extends StatefulWidget {
 
 class _AddEditNotePageState extends State<AddEditNotePage> {
   final _formKey = GlobalKey<FormState>();
-  late bool isImportant;
-  late int number;
+  // late bool isImportant;
+  // late int number;
   late String title;
   late String description;
 
   @override
   void initState() {
     super.initState();
-    isImportant = widget.note?.isImportant ?? false;
-    number = widget.note?.number ?? 0;
+    // isImportant = widget.note?.isImportant ?? false;
+    // number = widget.note?.number ?? 0;
     title = widget.note?.title ?? '';
     description = widget.note?.description ?? '';
   }
@@ -37,15 +37,15 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
       body: Form(
         key: _formKey,
         child: NoteFormWidget(
-          isImportant: isImportant,
-          number: number,
+          // isImportant: isImportant,
+          // number: number,
           title: title,
           description: description,
-          onChangedNumber: (number) {
-            setState(() {
-              this.number = number;
-            });
-          },
+          // onChangedNumber: (number) {
+          //   setState(() {
+          //     this.number = number;
+          //   });
+          // },
           onChangedTitle: (title) {
             setState(() {
               this.title = title;
@@ -94,8 +94,8 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
 
   Future updateNote() async {
     final note = widget.note!.copy(
-      isImportant: isImportant,
-      number: number,
+      // isImportant: isImportant,
+      // number: number,
       title: title,
       description: description,
     );
@@ -105,8 +105,8 @@ class _AddEditNotePageState extends State<AddEditNotePage> {
 
   Future addNote() async {
     final note = Notes(
-        isImportant: isImportant,
-        number: number,
+        // isImportant: isImportant,
+        // number: number,
         title: title,
         description: description,
         createdTime: DateTime.now());

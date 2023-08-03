@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
 class NoteFormWidget extends StatelessWidget {
-  final bool? isImportant;
-  final int? number;
+  // final bool? isImportant;
+  // final int? number;
   final String? title;
   final String? description;
 
-  final ValueChanged<int> onChangedNumber;
+  // final ValueChanged<int> onChangedNumber;
   final ValueChanged<String> onChangedTitle;
   final ValueChanged<String> onChangedDescription;
 
   const NoteFormWidget(
       {super.key,
-      this.isImportant,
-      this.number,
+      // this.isImportant,
+      // this.number,
       this.title,
       this.description,
-      required this.onChangedNumber,
+      // required this.onChangedNumber,
       required this.onChangedTitle,
       required this.onChangedDescription});
 
