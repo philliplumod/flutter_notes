@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatefulWidget {
   final VoidCallback onPressed;
   final Widget icon;
-  final BuildContext parentContext;
 
-  const CustomIconButton(
-      {super.key,
-      required this.onPressed,
-      required this.icon,
-      required this.parentContext});
+  const CustomIconButton({
+    super.key,
+    required this.onPressed,
+    required this.icon,
+  });
 
   @override
   State<CustomIconButton> createState() => _CustomIconButtonState();

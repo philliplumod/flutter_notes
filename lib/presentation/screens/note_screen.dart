@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_notes/presentation/screens/note_add_screen.dart';
 import 'package:flutter_notes/presentation/screens/note_detail_screen.dart';
 import 'package:flutter_notes/presentation/widgets/note_icon_button.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -9,7 +10,6 @@ import '../../data/db/notes_database.dart';
 import '../../data/model/note_model.dart';
 import '../bloc/notes_bloc.dart';
 import '../widgets/note_card.dart';
-import 'note_edit_screen.dart';
 
 class NoteScreen extends StatefulWidget {
   const NoteScreen({Key? key}) : super(key: key);
@@ -63,7 +63,7 @@ class _NoteScreenState extends State<NoteScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const AddEditNotePage()),
+              MaterialPageRoute(builder: (context) => const AddNotePage()),
             );
             _notesBloc.add(RefreshNotesEvent());
           },
@@ -194,7 +194,6 @@ class _NoteScreenState extends State<NoteScreen> {
                       _notesBloc.add(RefreshNotesEvent());
                     },
                     icon: const Icon(Icons.delete_outline),
-                    parentContext: context,
                   )
                 ],
               )

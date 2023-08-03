@@ -31,9 +31,21 @@ class _AddNotePageState extends State<AddNotePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isFormValid = title.isNotEmpty && description.isNotEmpty;
+
     return Scaffold(
       appBar: AppBar(
-        actions: [buildButton()],
+        actions: [
+          CustomIconButton(
+            onPressed: () {
+              addNotePage();
+            },
+            icon: Icon(
+              Icons.save_outlined,
+              color: isFormValid ? Colors.white : Colors.white38,
+            ),
+          )
+        ],
       ),
       body: Form(
           key: _formKey,
@@ -53,36 +65,36 @@ class _AddNotePageState extends State<AddNotePage> {
     );
   }
 
-  buildButton() {
-    final isFormValid = title.isNotEmpty && description.isNotEmpty;
-    return CustomIconButton(
-        onPressed: () {
-          addOrUpdateNote;
-        },
-        icon: Icon(
-          Icons.save_outlined,
-          color: isFormValid ? Colors.white : Colors.white38,
-        ),
-        parentContext: context);
-  }
+  // void addNotePage() async {
+  //   final isValid = _formKey.currentState!.validate();
 
-  void addOrUpdateNote() async {
+  //   if (isValid) {
+  //     await addNote();
+  //   }
+  // }
+
+  // Future addNote() async {
+  //   final note = Notes(
+  //       // isImportant: isImportant,
+  //       // number: number,
+  //       title: title,
+  //       description: description,
+  //       createdTime: DateTime.now());
+  //   await NotesDatabase.instance.create(note);
+  // }
+
+  void addNotePage() async {
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
-      final isSave = widget.note != null;
-      if (isSave) {
-        await addNote();
-      }
+      final note = Notes(
+        title: title,
+        description: description,
+        createdTime: DateTime.now(),
+      );
+      debugPrint('Adding note: $note');
+      final id = await NotesDatabase.instance.create(note);
+      debugPrint('Note added with ID: $id');
     }
-  }
-
-  Future addNote() async {
-    final note = Notes(
-      title: title,
-      description: description,
-      createdTime: DateTime.now(),
-    );
-    await NotesDatabase.instance.create(note);
   }
 }
