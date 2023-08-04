@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_notes/data/db/notes_database.dart';
-import 'package:flutter_notes/presentation/screens/note_edit_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/model/note_model.dart';
+import 'note_add_screen.dart';
 
 class NoteDetailScreen extends StatefulWidget {
   final int noteId;
@@ -79,7 +79,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       onPressed: () async {
         if (isLoading) {}
         await Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AddEditNotePage(note: note)));
+            builder: (context) => AddNotePage(note: note)));
 
         refreshNote();
       },

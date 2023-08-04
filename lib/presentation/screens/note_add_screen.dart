@@ -35,6 +35,9 @@ class _AddNotePageState extends State<AddNotePage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        elevation: 0,
         actions: [
           CustomIconButton(
             onPressed: () {

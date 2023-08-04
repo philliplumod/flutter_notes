@@ -10,6 +10,7 @@ import '../../data/db/notes_database.dart';
 import '../../data/model/note_model.dart';
 import '../bloc/notes_bloc.dart';
 import '../widgets/note_card.dart';
+import 'note_detail_update_screen.dart';
 
 class NoteScreen extends StatefulWidget {
   const NoteScreen({Key? key}) : super(key: key);
@@ -177,7 +178,7 @@ class _NoteScreenState extends State<NoteScreen> {
                     onPressed: () async {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => NoteDetailScreen(
+                          builder: (context) => NoteUpdateScreen(
                             noteId: note.id!,
                           ),
                         ),
