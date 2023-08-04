@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_notes/data/db/notes_database.dart';
+import 'package:flutter_notes/data/model/note_model.dart';
 import 'package:flutter_notes/presentation/widgets/note_form.dart';
-import 'package:intl/intl.dart';
-
-import '../../data/db/notes_database.dart';
-import '../../data/model/note_model.dart';
 
 class NoteUpdateScreen extends StatefulWidget {
-  final Notes? notes;
   final int noteId;
-  const NoteUpdateScreen({super.key, required this.noteId, this.notes});
+  const NoteUpdateScreen({Key? key, required this.noteId}) : super(key: key);
 
   @override
   State<NoteUpdateScreen> createState() => _NoteUpdateScreenState();
@@ -18,24 +15,23 @@ class _NoteUpdateScreenState extends State<NoteUpdateScreen> {
   final _formKey = GlobalKey<FormState>();
   late String title;
   late String description;
-  late Notes note;
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     refreshNote();
-    title = widget.notes?.title ?? '';
-    description = widget.notes?.description ?? '';
   }
 
   Future refreshNote() async {
     setState(() {
       isLoading = true;
     });
-    note = (await NotesDatabase.instance.readNote(widget.noteId));
+    final note = await NotesDatabase.instance.readNote(widget.noteId);
     setState(() {
       isLoading = false;
+      title = note.title;
+      description = note.description;
     });
   }
 
@@ -46,27 +42,6 @@ class _NoteUpdateScreenState extends State<NoteUpdateScreen> {
       appBar: _appBar(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          // : Padding(
-          //     padding: const EdgeInsets.all(12),
-          //     child: ListView(
-          //       padding: const EdgeInsets.symmetric(vertical: 8),
-          //       children: [
-          //         Text(
-          //           note.title,
-          //           style: const TextStyle(
-          //               color: Colors.black,
-          //               fontSize: 22,
-          //               fontWeight: FontWeight.bold),
-          //         ),
-          //         const SizedBox(height: 8),
-          //         Text(note.description),
-          //         Text(
-          //           DateFormat.yMMMd().format(note.createdTime),
-          //           style: const TextStyle(color: Colors.grey),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
           : Form(
               key: _formKey,
               child: NoteFormWidget(
